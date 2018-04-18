@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>自定义事件发布订阅</title>
+</head>
+
+<body>
+</body>
+<script>
+    class EventBus {
+        constructor() {
+            this.handlers = {}
+        }
+        addHandler(type, handler) {
+            if (!this.handlers[type]) {
+                this.handlers[type] = [];
+            };
+            this.handlers[type].push(handler)
+        }
+        fireHandler(type, ...arg) {
+            if (!this.handlers[type]) {
+                console.log("此事件不存在，请先定义,后触发")
+                return
+            };
+            for (let handler of this.handlers[type]) {
+                if (!arg) {
+                    handler()
+                } else {
+                    handler(...arg)
+                }
+            }
+        }
+        removeHandler(type, handler) {
+            if (!this.handlers[type]) {
+                console.log("此事件不存在，请先定义，后删除")
+                return
+            };
+            let index = this.handlers[type].indexOf(handler)
+            this.handlers[type].splice(index, 1);
+        }
+        removeAllHandler(type) {
+            if (!this.handlers[type]) {
+                console.log("此事件不存在，请先定义，后删除")
+                return
+            };
+            delete this.handlers[type]
+        }
+    }
+
+    // function EventBus() {
+    //     this.handlers = {}
+    // };
+    // EventBus.prototype = {
+    //     constructor: EventBus,
+    //     addHandler: function(type, handler) {
+    //         if (!this.handlers[type]) {
+    //             this.handlers[type] = [];
+    //         };
+    //         this.handlers[type].push(handler)
+    //     },
+    //     fireHandler: function(type) {
+    //         if (!this.handlers[type]) {
+    //             console.log("此事件不存在，请先定义,后触发")
+    //             return
+    //         };
+    //         for (let handler of this.handlers[type]) {
+    //             handler()
+    //         }
+    //     },
+    //     removeHandler: function(type, handler) {
+    //         if (!this.handlers[type]) {
+    //             console.log("此事件不存在，请先定义，后删除")
+    //             return
+    //         };
+    //         let index = this.handlers[type].indexOf(handler)
+    //         this.handlers[type].splice(index, 1);
+    //     },
+    //     removeAllHandler: function(type) {
+    //         if (!this.handlers[type]) {
+    //             console.log("此事件不存在，请先定义，后删除")
+    //             return
+    //         };
+    //         delete this.handlers[type]
+    //     }
+    // }
+    let event = new EventBus();
+
+    function f1(v) {
+        console.log(v)
+    }
+
+    function f2() {
+        console.log("32")
+    }
+
+    function f3() {
+        console.log("33")
+    }
+    event.addHandler("sendmsg", f1)
+    event.addHandler("sendmsg", f2)
+    event.addHandler("sendmsg", f3)
+        // event.removeHandler("sendmsg", f1)
+        // event.removeAllHandler("sendmsg", f1)
+    event.fireHandler("sendmsg", 5)
+    event.fireHandler("sendmsg", 67)
+</script>
+
+</html>

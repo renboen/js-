@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>节流和防抖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container" style="background:red;height:300px;overflow-y:scroll">
+        <div style="height:300px;width:300px;background:yellow;
+       "></div>
+        <div style="height:300px;width:300px;background:blue;"></div>
+        <div style="height:300px;width:300px;background:#50503E"></div>
+
+    </div>
+</body>
+<script>
+    // 节流和防斗为了可以传递参数, 写成了闭包形式。 实现方式有多中。
+    function throttle(method, delay = 50) {
+        // 节流函数
+        // method：实际执行的方法
+        // delay：忽略的时间，只有两次触发时间的时间大于delay时才会执行。否则会被清除掉
+        return function() {
+            let content = this;
+            let arg = Array.from(arguments);
+            clearTimeout(method.timer)
+            method.timer = setTimeout(function() {
+                console.log(content)
+                method.call(content, ...arg)
+            }, delay)
+        }
+    };
+
+
+    function debounce(method, delay = 50, mustdotime = 100) {
+        //防抖函数
+        //mustdotime必须在该时间内执行一次，在改时间内，如果两次触发时间的时间小于delay时会被清除掉。
+        let start_time = null;
+        return function() {
+            let content = this;
+            let arg = Array.prototype.slice.call(arguments);
+            let current_time = +new Date();
+            if (!start_time) {
+                start_time = current_time
+            }
+            if (current_time - start_time > mustdotime) {
+                console.log("obje[[[[[[[[[[[[ct")
+                console.log(content)
+                method.call(content, ...arg);
+                start_time = current_time;
+                console.log(start_time)
+            } else {
+                clearTimeout(method.timer)
+                method.timer = setTimeout(function() {
+                    console.log(content)
+                    method.call(content, arg)
+                }, delay)
+            }
+        }
+    };
+
+    function test(v, l) {
+        console.log("1234455=>" + v)
+        console.log(v)
+    };
+    //例子
+    let div = document.getElementById("container");
+    let ok = debounce(test, 500, 1000)
+    let okl = throttle(test, 500)
+    div.addEventListener("scroll", function(e) {
+        okl(e.target);
+        ok(e.target)
+    }, false);
+</script>
+
+</html>
